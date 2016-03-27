@@ -3,7 +3,7 @@ import {default as React, PropTypes} from 'react';
 import Resizable from './Resizable';
 
 type State = {width: number, height: number, aspectRatio: number};
-type Size = {width: number, height: number};
+type Size = {width: number, height: number, deltaX: number, deltaY: number};
 type ResizeData = {element: Element, size: Size};
 
 // An example use of Resizable.
@@ -23,7 +23,7 @@ export default class ResizableBox extends React.Component {
   };
 
   onResize = (event, {element, size}) => {
-    let {width, height} = size;
+    let {width, height, deltaX, deltaY} = size;
 
     this.setState(size, () => {
       this.props.onResize && this.props.onResize(event, {element, size});

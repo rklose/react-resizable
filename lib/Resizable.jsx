@@ -130,10 +130,31 @@ export default class Resizable extends React.Component {
    * @param  {String} handlerName Handler name to wrap.
    * @return {Function}           Handler function.
    */
-  resizeHandler(handlerName: string): Function {
+  resizeHandler(handlerName: string, handlerAction: string): Function {
     return (e, {node, position}: DragCallbackData) => {
       const {deltaX, deltaY} = position;
-      let width = this.state.width + deltaX, height = this.state.height + deltaY;
+      let width = this.state.width, height = this.state.height;
+      let posX = 0, posY = 0;
+
+        switch (handlerAction) {
+            case 'nw-resize':
+                width = this.state.width - deltaX, height = this.state.height - deltaY;
+                posX = deltaX, posY = deltaY;
+                break;
+            case 'ne-resize':
+                width = this.state.width + deltaX, height = this.state.height - deltaY;
+                posX = 0, posY = deltaY;
+                break;
+            case 'sw-resize':
+                width = this.state.width - deltaX, height = this.state.height + deltaY;
+                posX = deltaX, posY = 0;
+                break;
+            case 'se-resize':
+            default:
+                width = this.state.width + deltaX, height = this.state.height + deltaY;
+                posX = 0, posY = 0;
+                break;
+        }
 
       // Early return if no change
       let widthChanged = width !== this.state.width, heightChanged = height !== this.state.height;
@@ -149,13 +170,19 @@ export default class Resizable extends React.Component {
         newState.resizing = false;
       } else {
         // Early return if no change after constraints
-        if (width === this.state.width && height === this.state.height) return;
-        newState.width = width;
-        newState.height = height;
+        //if (width === this.state.width && height === this.state.height) return;
+
+        newState = {
+          width: width,
+          height: height,
+          posX: posX,
+          posY: posY
+        };
+
       }
 
       this.setState(newState, () => {
-        this.props[handlerName] && this.props[handlerName](e, {node, size: {width, height}});
+        this.props[handlerName] && this.props[handlerName](e, {node, size: {width: width, height: height, deltaX: posX, deltaY: posY}});
       });
 
     };
@@ -181,9 +208,36 @@ export default class Resizable extends React.Component {
           ref="draggable"
           onStop={this.resizeHandler('onResizeStop')}
           onStart={this.resizeHandler('onResizeStart')}
-          onDrag={this.resizeHandler('onResize')}
+          onDrag={this.resizeHandler('onResize', 'nw-resize')}
           >
-          <span className="react-resizable-handle" />
+          <span className="react-resizable-handle nw-resize" />
+        </DraggableCore>,
+        <DraggableCore
+          {...p.draggableOpts}
+          ref="draggable"
+          onStop={this.resizeHandler('onResizeStop')}
+          onStart={this.resizeHandler('onResizeStart')}
+          onDrag={this.resizeHandler('onResize', 'ne-resize')}
+          >
+          <span className="react-resizable-handle ne-resize" />
+        </DraggableCore>,
+        <DraggableCore
+          {...p.draggableOpts}
+          ref="draggable"
+          onStop={this.resizeHandler('onResizeStop')}
+          onStart={this.resizeHandler('onResizeStart')}
+          onDrag={this.resizeHandler('onResize', 'se-resize')}
+          >
+          <span className="react-resizable-handle se-resize" />
+        </DraggableCore>,
+        <DraggableCore
+          {...p.draggableOpts}
+          ref="draggable"
+          onStop={this.resizeHandler('onResizeStop')}
+          onStart={this.resizeHandler('onResizeStart')}
+          onDrag={this.resizeHandler('onResize', 'sw-resize')}
+          >
+          <span className="react-resizable-handle sw-resize" />
         </DraggableCore>
       ]
     });
