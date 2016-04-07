@@ -37,6 +37,12 @@ export default class ResizableBox extends React.Component {
     // with a new width and height.
     let {handleSize, onResizeStart, onResizeStop, draggableOpts,
          minConstraints, maxConstraints, lockAspectRatio, ...props} = this.props;
+
+    var style = {
+        width: (typeof this.state.width !== 'undefined') ? this.state.width + 'px' : 'auto',
+        height: (typeof this.state.height !== 'undefined') ? this.state.height + 'px' : 'auto'
+    };
+
     return (
       <Resizable
         handleSize={handleSize}
@@ -50,7 +56,7 @@ export default class ResizableBox extends React.Component {
         maxConstraints={maxConstraints}
         lockAspectRatio={lockAspectRatio}
         >
-        <div style={{width: this.state.width + 'px', height: this.state.height + 'px'}} {...props} />
+        <div style={style} {...props} />
       </Resizable>
     );
   }
