@@ -1,5 +1,6 @@
 // @flow
 import {default as React, PropTypes} from 'react';
+import merge from 'merge';
 import Resizable from './Resizable';
 
 type State = {width: number, height: number, aspectRatio: number};
@@ -43,11 +44,18 @@ export default class ResizableBox extends React.Component {
         height: (typeof this.state.height !== 'undefined') ? this.state.height + 'px' : 'auto'
     };
 
+    var resizableProps = {};
+    if (typeof this.state.width !== 'undefined') {
+      resizableProps = merge(resizableProps, {width: this.state.width});
+    }
+
+    if (typeof this.state.height !== 'undefined') {
+      resizableProps = merge(resizableProps, {height: this.state.height});
+    }
+
     return (
       <Resizable
         handleSize={handleSize}
-        width={style.width}
-        height={style.height}
         onResizeStart={onResizeStart}
         onResize={this.onResize}
         onResizeStop={onResizeStop}
@@ -55,6 +63,7 @@ export default class ResizableBox extends React.Component {
         minConstraints={minConstraints}
         maxConstraints={maxConstraints}
         lockAspectRatio={lockAspectRatio}
+        {...resizableProps}
         >
         <div style={style} {...props} />
       </Resizable>

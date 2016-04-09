@@ -8,6 +8,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _merge = require('merge');
+
+var _merge2 = _interopRequireDefault(_merge);
+
 var _Resizable = require('./Resizable');
 
 var _Resizable2 = _interopRequireDefault(_Resizable);
@@ -74,12 +78,19 @@ var ResizableBox = function (_React$Component) {
       height: typeof this.state.height !== 'undefined' ? this.state.height + 'px' : 'auto'
     };
 
+    var resizableProps = {};
+    if (typeof this.state.width !== 'undefined') {
+      resizableProps = (0, _merge2.default)(resizableProps, { width: this.state.width });
+    }
+
+    if (typeof this.state.height !== 'undefined') {
+      resizableProps = (0, _merge2.default)(resizableProps, { height: this.state.height });
+    }
+
     return _react2.default.createElement(
       _Resizable2.default,
-      {
+      _extends({
         handleSize: handleSize,
-        width: style.width,
-        height: style.height,
         onResizeStart: onResizeStart,
         onResize: this.onResize,
         onResizeStop: onResizeStop,
@@ -87,7 +98,7 @@ var ResizableBox = function (_React$Component) {
         minConstraints: minConstraints,
         maxConstraints: maxConstraints,
         lockAspectRatio: lockAspectRatio
-      },
+      }, resizableProps),
       _react2.default.createElement('div', _extends({ style: style }, props))
     );
   };
